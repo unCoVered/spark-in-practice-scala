@@ -39,10 +39,10 @@ object StreamingOnTweets extends App {
 
   def top10Hashtag() = {
     // TODO fill the keys and tokens
-    val CONSUMER_KEY = "TODO"
-    val CONSUMER_SECRET = "TODO"
-    val ACCESS_TOKEN = "TODO"
-    val ACCESS_TOKEN_SECRET = "TODO"
+    val CONSUMER_KEY = "BFdcHpyoxgLerfkADnj8N9vvl"
+    val CONSUMER_SECRET = "wP5o8Oq1qfRoTh8z5GpCGY2A7YHwBWfb0XsULgUnmzr0ujuLI1"
+    val ACCESS_TOKEN = "365704012-qJJiXGx2r4Y5EoQWAMC5acrXOzOCsm602iNbTHT6"
+    val ACCESS_TOKEN_SECRET = "ptdPfNtRNPxtSLY3lpY3IxIYAeDiapOb8DToF1LeSZcxX"
 
     System.setProperty("twitter4j.oauth.consumerKey", CONSUMER_KEY)
     System.setProperty("twitter4j.oauth.consumerSecret", CONSUMER_SECRET)
@@ -79,27 +79,32 @@ object StreamingOnTweets extends App {
     val status = tweetsStream.map(_.getText)
     // Here print the status's text: see the Status class
     // Hint: use the print method
-    // TODO write code here
-
+    status.print()
 
     // Find the 10 most popular Hashtag in the last minute
 
     // For each tweet in the stream filter out all the hashtags
     // stream is like a sequence of RDD so you can do all the operation you did in the first part of the hands-on
     // Hint: think about what you did in the Hashtagmining part
-    // TODO write code here
-    val hashTags = null
+    val hashTags = tweetsStream.map(_.getText.split(" ").filter(_.startsWith("#")).filter(_.length > 1))
 
     // Now here, find the 10 most popular hashtags in a 60 seconds window
     // Hint: look at the reduceByKeyAndWindow function in the spark doc.
     // Reduce last 60 seconds of data
     // Hint: look at the transform function to operate on the DStream
-    // TODO write code here
-    val top10 = null
+    val top10 = hashTags.map((_, 1))
+      .reduceByKeyAndWindow(_ + _, Seconds(60))
+      .transform(_.sortBy(_._2, false))
 
     // and return the 10 most populars
     // Hint: loop on the RDD and take the 10 most popular
-    // TODO write code here
+    top10.foreachRDD( rdd => {
+      val topList = rdd.take(10)
+      topList.foreach {
+        case (tag, count) => println(s"$tag: $count")
+      }
+    })
+
 
     // we need to tell the context to start running the computation we have setup
     // it won't work if you don't add this!
