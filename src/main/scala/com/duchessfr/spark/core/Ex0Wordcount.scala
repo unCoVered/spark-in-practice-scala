@@ -70,5 +70,4 @@ object Ex0Wordcount {
 
     tweets.filter(_._2 > 4)
   }
-
 }

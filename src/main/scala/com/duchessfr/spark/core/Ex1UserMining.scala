@@ -72,9 +72,8 @@ object Ex1UserMining {
 
     tweets.map(tweet => (tweet.user, 1))
       .reduceByKey(_ + _)
-      .sortBy(tuple => tuple._2)
+      .sortBy(tuple => tuple._2, false, 1)
       .take(10)
   }
-
 }
 
