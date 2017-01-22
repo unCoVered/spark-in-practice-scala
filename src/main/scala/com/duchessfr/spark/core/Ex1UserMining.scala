@@ -49,9 +49,8 @@ object Ex1UserMining {
    */
   def tweetsByUser(): RDD[(String, Iterable[Tweet])] = {
     val tweets = loadData
-    // TODO write code here
-    // Hint: the Spark API provides a groupBy method
-    null
+
+    tweets.groupBy(_.user)
   }
 
   /**
@@ -60,9 +59,8 @@ object Ex1UserMining {
   def tweetByUserNumber(): RDD[(String, Int)] = {
     val tweets = loadData
 
-    // TODO write code here
-    // Hint: think about what you did in the wordcount example
-    null
+    tweets.map(tweet => (tweet.user, 1))
+      .reduceByKey(_ + _)
   }
 
 
@@ -70,11 +68,12 @@ object Ex1UserMining {
    *  Top 10 twitterers
    */
   def topTenTwitterers(): Array[(String, Int)] = {
+    val tweets = loadData()
 
-    // Return the top 10 of persons which used to twitt the more
-    // TODO write code here
-    // Hint: the Spark API provides a sortBy method
-    null
+    tweets.map(tweet => (tweet.user, 1))
+      .reduceByKey(_ + _)
+      .sortBy(tuple => tuple._2)
+      .take(10)
   }
 
 }

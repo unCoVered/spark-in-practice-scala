@@ -52,9 +52,13 @@ object Ex2TweetMining {
   def mentionOnTweet(): RDD[String] = {
     val tweets = loadData
 
-    // Hint: think about separating the word in the text field and then find the mentions
-    // TODO write code here
-    null
+//    tweets.flatMap(_.text.split(" ").filter(_.startsWith("@")).filter(_.length > 1))
+
+    for (
+      word <- tweets.flatMap(tweet => tweet.text.split(" "));
+      if (word.startsWith("@"));
+      if (word.length > 1)
+    ) yield word
   }
 
   /**
