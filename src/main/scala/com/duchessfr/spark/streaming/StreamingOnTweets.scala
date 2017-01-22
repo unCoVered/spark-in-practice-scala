@@ -98,13 +98,10 @@ object StreamingOnTweets extends App {
 
     // and return the 10 most populars
     // Hint: loop on the RDD and take the 10 most popular
-    top10.foreachRDD( rdd => {
-      val topList = rdd.take(10)
-      topList.foreach {
+    top10.foreachRDD( rdd =>
+      rdd.take(10).foreach {
         case (tag, count) => println(s"$tag: $count")
-      }
-    })
-
+      })
 
     // we need to tell the context to start running the computation we have setup
     // it won't work if you don't add this!
