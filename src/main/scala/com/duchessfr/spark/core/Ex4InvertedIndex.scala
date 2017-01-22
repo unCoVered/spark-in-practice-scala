@@ -33,13 +33,10 @@ object Ex4InvertedIndex {
     val tweets = sc.textFile ("data/reduced-tweets.json")
         .mapPartitions (TweetUtils.parseFromJson (_) )
 
-    // Let's try it out!
-    // Hint:
-    // For each tweet, extract all the hashtag and then create couples (hashtag,tweet)
-    // Then group the tweets by hashtag
-    // Finally return the inverted index as a map structure
-    // TODO write code here
-    null
+    tweets.flatMap(tweet =>
+      tweet.text.split(" ").filter(_.startsWith("#")).filter(_.length > 1)
+      .map(hastag => (hastag, tweet)))
+      .groupByKey
+      .collectAsMap()
   }
-
 }
