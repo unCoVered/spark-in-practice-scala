@@ -53,13 +53,11 @@ object DataFrameOnTweets {
 
     // Create a sql context: the SQLContext wraps the SparkContext, and is specific to Spark SQL.
     // It is the entry point in Spark SQL.
-    // TODO write code here
-    val sqlcontext = null
+    val sqlcontext = new SQLContext(sc)
 
     // Load the data regarding the file is a json file
     // Hint: use the sqlContext and apply the read method before loading the json file
-    // TODO write code here
-    null
+    sqlcontext.read.json(pathToFile)
   }
 
 
@@ -70,7 +68,7 @@ object DataFrameOnTweets {
     val dataframe = loadData()
 
     // Displays the content of the DataFrame to stdout
-    // TODO write code here
+    dataframe.show()
   }
 
   /**
@@ -80,7 +78,7 @@ object DataFrameOnTweets {
     val dataframe = loadData()
 
     // Print the schema
-    // TODO write code here
+    dataframe.printSchema()
   }
 
   /**
@@ -90,8 +88,7 @@ object DataFrameOnTweets {
     val dataframe = loadData()
 
     // Select all the persons which are located in Paris
-    // TODO write code here
-    null
+    dataframe.filter(dataframe.col("place").equalTo("Paris")).toDF()
   }
 
 
@@ -103,8 +100,12 @@ object DataFrameOnTweets {
 
     // First group the tweets by user
     // Then sort by descending order and take the first one
-    // TODO write code here
-    null
+    dataframe.groupBy("user")
+      .count()
+      .rdd
+      .map(x => (x.get(1).asInstanceOf[Long], x.get(0).asInstanceOf[String]))
+      .sortBy(_._1, false, 1)
+      .first()
   }
 
 }
